@@ -20,3 +20,8 @@ export interface IChartStat{
   emg3: number
   emg4: number
 }
+
+export interface IDataset{
+  id: number,
+  name: string
+}
