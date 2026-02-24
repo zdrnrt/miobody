@@ -1,5 +1,5 @@
 import { IChartSeries } from '@/entities/Chart'
-import {SeriesChart} from './SeriesChart/ui/SeriesChart'
+import {SeriesChart} from '@shared/ui/SeriesChart'
 
 const Content: React.FC<{series: IChartSeries[]}> = ({series}) => {
   console.log('content', series)
