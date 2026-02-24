@@ -17,21 +17,22 @@ const Upload: React.FC = () => {
   const navigate = useNavigate();
 
 
-  function checkFile(files: FileList): boolean {
+  function checkFile(files: FileList): void {
     const file = files[0];
 
     if (file.size > 16000000){
+      setFile(null)
       setError('Файл не должен быть больше 16 МБ')
-      return false
+      return 
     }
     const ext = file.name.slice(file.name.lastIndexOf('.') + 1)
     if (ext !== 'xlsx'){
+      setFile(null)
       setError('Файл должен быть с расширением .xlsx')
-      return false
+      return 
     }
     setError(null)
     setFile(file)
-    return true
   }
 
    const handleDragEnter = useCallback((e: DragEvent<HTMLLabelElement>) => {
@@ -99,24 +100,21 @@ const Upload: React.FC = () => {
 
   return (<div>
 
-    <div className={clsx('mb-4 text-gray-600', {'hidden': !file})}>Выбран файл: {file?.name}</div>
-
-    <label className={clsx("flex flex-col justify-center align-center min-h-30 mb-4 p-4 rounded-sm bg-indigo-200", {"bg-indigo-400": dragging, "text-white": dragging}, {"pointer-events-none": loading} )}
+    <label className={clsx("flex flex-col justify-center align-center min-h-30 mb-4 p-4 rounded-sm bg-indigo-100 cursor-pointer border-dashed border-2 border-indigo-500 hover:bg-indigo-200 text-center transition", {"bg-indigo-300 text-white border-solid": dragging}, {"pointer-events-none": loading} )}
       ref={dropzoneRef}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      {!loading 
-        ? <span>{!dragging ? 'Выберите или перенесети файл в эту область' : 'Перенесите файл в эту область' }</span>
-        : <div className="mb-4 text-gray-600">Идет загрузка файла</div>
-      }
+      {!loading && !file && <div>{!dragging ? 'Выберите или перенесети файл в эту область' : 'Отпустите файл над этой областью' }</div>}
+      {loading && <div className="mb-4 text-gray-600">Идет загрузка файла...</div>}
+      {file && !loading && <div>Выбран файл: <strong>{file?.name}</strong></div>}
+      <div className={clsx('text-rose-400', {'hidden': !error})}>{error}</div>
       <input type="file" name="file" id="file" className="hidden" onChange={inputFileHandler} disabled={loading}/>
     </label>
-    <div className={clsx('mb-4 text-rose-400', {'hidden': !error})}>{error}</div>
   
-    <button disabled={loading || !!error || !file} className="p-2 w-full md:w-auto rounded-sm cursor-pointer bg-indigo-400 hover:bg-indigo-600 text-white transition disabled:bg-gray-300 disabled:text-black" onClick={handleUpload}>Загрузить данные</button>
+    <button disabled={loading || !file} className="p-2 w-full md:w-auto rounded-sm cursor-pointer bg-indigo-600 hover:bg-indigo-400 text-white transition disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-auto" onClick={handleUpload}>Загрузить файл</button>
 
   </div>)
 }
