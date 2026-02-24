@@ -2,6 +2,7 @@ import { getAll } from "@/entities/Chart"
 import { IDataset } from "@/entities/Chart"
 import { useEffect, useState } from "react"
 import DataItem from "./DataItem/ui/DataItem";
+import Upload from "@/widgets/Upload";
 
 const Main: React.FC = () => {
 
@@ -14,6 +15,7 @@ const Main: React.FC = () => {
       .then((response) => {
         console.log(response.data)
         setData(response.data)
+        setError(false)
       })
       .catch((error) => {
         console.error('main getAll error:', error)
@@ -23,12 +25,15 @@ const Main: React.FC = () => {
   }, [])
 
   return (<>
-    <header className="md:flex md:justify-between md:items-center mb-4 pb-2 border-b-2 border-gray-400">
-      <h1 className="mb-2 md:mb-0 text-3xl font-bold">Личный кабинет</h1>
-      <button className="p-2 w-full md:w-auto rounded-sm cursor-pointer bg-indigo-400 hover:bg-indigo-600 text-white transition">Загрузить данные</button>
+    <header className="mb-4 pb-2 border-b-2 border-gray-400">
+      <h1 className="text-3xl font-bold">Личный кабинет</h1>
     </header>
     <main>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="mb-4">
+        <Upload />
+      </div>
+      <h2 className="mb-2 text-2xl font-bold">Список загруженных данных</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
         {!error 
           ? data.length
             ? data.map((el) => (<DataItem key={el.id} id={el.id} name={el.name} />))

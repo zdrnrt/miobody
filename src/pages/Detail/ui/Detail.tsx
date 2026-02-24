@@ -11,6 +11,7 @@ const Detail: React.FC = () => {
     const controller = new AbortController();
     getChart(Number(id), controller.signal)
       .then((response) => {
+        setError(false)
         console.log(response.data)
       })
       .catch((error) => {

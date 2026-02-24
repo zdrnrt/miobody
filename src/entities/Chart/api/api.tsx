@@ -11,5 +11,12 @@ const getAll = (signal: AbortSignal) => {
     signal: signal
   })
 }
+const uploadChart = (formData: FormData) => {
+  return axios.post(`${API_URL}/dataset`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
 
-export {getChart, getAll}
+export {getChart, getAll, uploadChart}
