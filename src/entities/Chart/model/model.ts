@@ -10,7 +10,7 @@ export interface IChart {
 }
 
 export interface IChartSeries extends IChartStat{
-  timestamp: 0
+  timestamp: number
 }
 
 export interface IChartStat{
