@@ -6,6 +6,7 @@ import DataItem from "./DataItem/ui/DataItem";
 const Main: React.FC = () => {
 
   const [data, setData] = useState<IDataset[]>([])
+  const [error, setError] = useState<boolean>(false)
 
   useEffect(() => {
     const controller = new AbortController();
@@ -13,6 +14,10 @@ const Main: React.FC = () => {
       .then((response) => {
         console.log(response.data)
         setData(response.data)
+      })
+      .catch((error) => {
+        console.error('main getAll error:', error)
+        setError(true)
       })
     return () => controller.abort()
   }, [])
@@ -24,9 +29,11 @@ const Main: React.FC = () => {
     </header>
     <main>
       <div className="grid grid-cols-3 gap-2">
-        {data.length 
-          ? data.map((el) => (<DataItem key={el.id} id={el.id} name={el.name} />))
-          : <div className="col-span-full py-2 px-5 text-gray-600">Ничего не найдено</div>
+        {!error 
+          ? data.length
+            ? data.map((el) => (<DataItem key={el.id} id={el.id} name={el.name} />))
+            : <div className="col-span-full py-2 px-5 text-gray-600">Ничего не найдено</div>
+          : <div className="col-span-full py-2 px-5 text-gray-600">При загрузке данных произошла ошибка</div>
         }
       </div>
     </main>
