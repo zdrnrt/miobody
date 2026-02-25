@@ -1,8 +1,9 @@
 import { Link, useParams } from "react-router"
 import { getChart } from "@/entities/Chart"
 import { useEffect, useState } from "react"
-import Content from "./Content/ui/Content"
 import { IChart } from "@/entities/Chart"
+import { SeriesTable } from "@/shared/ui/SeriesTable"
+import { SeriesChart } from "@/shared/ui/SeriesChart"
 
 const Detail: React.FC = () => {
 
@@ -91,10 +92,8 @@ const Detail: React.FC = () => {
         ? <div className="col-span-full py-2 px-5 text-gray-600">При загрузке данных произошла ошибка</div>
         : ''
       }
-      {data 
-        ? <Content series={data.series}/> 
-        : ''
-      }
+      {data && <SeriesChart data={data.series}/> }
+      {data && <SeriesTable data={data.stats}/> }
     </main>
   </>)
 }

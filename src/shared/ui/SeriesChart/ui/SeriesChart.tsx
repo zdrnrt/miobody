@@ -4,14 +4,6 @@ import * as d3 from 'd3';
 import { IChartSeries } from '@/entities/Chart';
 
 export const SeriesChart: React.FC<{ data: IChartSeries[] }> = ({ data }) => {
-	const margin = { top: 40, right: 80, bottom: 60, left: 80 };
-	const pointColor = {
-		angle: '#2563eb',
-		emg1: '#dc2626',
-		emg2: '#16a34a',
-		emg3: '#d97706',
-		emg4: '#7c3aed',
-	};
 
 	const chartContainerRef = useRef<HTMLDivElement>(null);
 	const svgRef = useRef<SVGSVGElement>(null);
@@ -32,10 +24,10 @@ export const SeriesChart: React.FC<{ data: IChartSeries[] }> = ({ data }) => {
         <div class="tooltip-content">
           <div class="tooltip-header"><strong>Время: ${d.timestamp}</strong></div>
           <div class="tooltip-row">Angle: ${d.angle} °</div>
-          <div class="tooltip-row">EMG1: ${d.emg1} mV</div>
-          <div class="tooltip-row">EMG2: ${d.emg2} mV</div>
-          <div class="tooltip-row">EMG3: ${d.emg3} mV</div>
-          <div class="tooltip-row">EMG4: ${d.emg4} mV</div>
+          <div class="tooltip-row">EMG1: <strong>${d.emg1} mV</strong></div>
+          <div class="tooltip-row">EMG2: <strong>${d.emg2} mV</strong></div>
+          <div class="tooltip-row">EMG3: <strong>${d.emg3} mV</strong></div>
+          <div class="tooltip-row">EMG4: <strong>${d.emg4} mV</strong></div>
         </div>
       `;
 			}
@@ -56,9 +48,10 @@ export const SeriesChart: React.FC<{ data: IChartSeries[] }> = ({ data }) => {
 
 		const chartGroup = svg
 			.append('g')
+      .attr('transform', `translate(20, 20)`);
 
-		const innerWidth = chartContainerRef.current!.clientWidth;
-		const innerHeight = height - margin.top - margin.bottom;
+		const innerWidth = chartContainerRef.current!.clientWidth - 60;
+		const innerHeight = height - 60;
 
 		const sortedData = [...data].sort((a, b) => a.timestamp - b.timestamp);
 		let chartData = sortedData;
@@ -169,11 +162,10 @@ export const SeriesChart: React.FC<{ data: IChartSeries[] }> = ({ data }) => {
 			.datum(chartData)
 			.attr('class', 'line angle-line')
 			.attr('fill', 'none')
-			.attr('stroke', pointColor.angle)
+			.attr('stroke', '#2563eb')
 			.attr('stroke-width', 2.5)
 			.attr('d', angleLine);
 
-		// Добавляем точки для всех значений с тултипами
 		const points = chartGroup
 			.selectAll('.point-group')
 			.data(chartData)
@@ -185,12 +177,11 @@ export const SeriesChart: React.FC<{ data: IChartSeries[] }> = ({ data }) => {
 				(d) => `translate(${xScale(d.timestamp)},${yScale(d.angle)})`,
 			);
 
-		// Основная точка angle
 		points
 			.append('circle')
 			.attr('class', 'point angle-point')
 			.attr('r', 4)
-			.attr('fill', pointColor)
+			.attr('fill', '#2563eb')
 			.attr('stroke', '#ffffff')
 			.attr('stroke-width', 2)
 			.style('cursor', 'pointer')
@@ -200,7 +191,9 @@ export const SeriesChart: React.FC<{ data: IChartSeries[] }> = ({ data }) => {
 					.duration(200)
 					.attr('r', 4 * 1.8)
 					.attr('fill', '#2563eb');
+				handleMouseMove(event, d);
 			})
+      .on('mousemove', (event, d) => handleMouseMove(event, d))
 			.on('mouseout', function () {
 				d3.select(this)
 					.transition()
@@ -212,7 +205,7 @@ export const SeriesChart: React.FC<{ data: IChartSeries[] }> = ({ data }) => {
 					tooltipRef.current.style.display = 'none';
 				}
 			});
-
+/*
 		points
 			.append('circle')
 			.attr('r', 4 * 3)
@@ -239,38 +232,33 @@ export const SeriesChart: React.FC<{ data: IChartSeries[] }> = ({ data }) => {
 					tooltipRef.current.style.display = 'none';
 				}
 			});
-
+*/
 		chartGroup
 			.append('g')
 			.attr('class', 'axis axis-x')
 			.attr('transform', `translate(0,${innerHeight})`)
-			.call(d3.axisBottom(xScale).ticks(10));
+			// .call(d3.axisBottom(xScale).ticks(10));
+			.call(
+        d3.axisBottom(xScale)
+          .ticks(10)
+          .tickFormat(d => {
+            const timestamp = d as number;
+            return d3.timeFormat('%M:%S')(new Date(timestamp));
+          })
+      )
 
 		chartGroup
 			.append('g')
 			.attr('class', 'axis axis-y')
 			.call(d3.axisLeft(yScale).ticks(10));
 
-		chartGroup
-			.append('text')
-			.attr('class', 'axis-label')
-			.attr('x', innerWidth / 2)
-			.attr('y', innerHeight + margin.bottom - 15);
-
-		chartGroup
-			.append('text')
-			.attr('class', 'axis-label')
-			.attr('transform', 'rotate(-90)')
-			.attr('x', -innerHeight / 2)
-			.attr('y', -margin.left + 20)
-			.attr('text-anchor', 'middle');
 
 		const legend = chartGroup
 			.append('g')
 			.attr('class', 'legend')
 			.attr('transform', `translate(${innerWidth - 100}, 10)`);
 
-		const legendItems = [{ label: 'Angle', color: pointColor.angle }];
+		const legendItems = [{ label: 'Angle', color: '#2563eb' }];
 
 		legendItems.forEach((item, i) => {
 			const legendRow = legend
@@ -286,7 +274,25 @@ export const SeriesChart: React.FC<{ data: IChartSeries[] }> = ({ data }) => {
 				.attr('alignment-baseline', 'middle')
 				.text(item.label);
 		});
+/*
+		const brush = d3.brushX()
+			.extent([[0, 0], [innerWidth, innerHeight]])
+			.on('end', (event) => {
+				if (!event.selection) {
+					setBrushSelection(null);
+					return;
+				}
+				const [x1, x2] = event.selection;
+				const start = xScale.invert(x1);
+				const end = xScale.invert(x2);
+				setBrushSelection([start, end]);
+				onBrush(start, end);
+			});
 
+		chartGroup.append('g')
+			.attr('class', 'brush')
+			.call(brush);
+*/
 		const anglePath = chartGroup.select('.angle-line');
 		const pathLength = anglePath.node()?.getTotalLength() || 0;
 
@@ -305,7 +311,7 @@ export const SeriesChart: React.FC<{ data: IChartSeries[] }> = ({ data }) => {
 			.duration(800)
 			.delay((_, i) => i * 20)
 			.attr('r', 4);
-	}, [data, width, height, margin, pointColor, handleMouseMove]);
+	}, [data, width, height, handleMouseMove]);
 
 	return (
 		<div

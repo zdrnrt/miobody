@@ -29,7 +29,7 @@ const Main: React.FC = () => {
       <h1 className="text-3xl font-bold">Личный кабинет</h1>
     </header>
     <main>
-      <div className="mb-4">
+      <div className="mb-8">
         <Upload />
       </div>
       <h2 className="mb-2 text-2xl font-bold">Список загруженных данных</h2>

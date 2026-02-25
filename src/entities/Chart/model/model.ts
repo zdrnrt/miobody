@@ -2,18 +2,20 @@ export interface IChart {
   id: number
   name: string
   series: IChartSeries[]
-  stats: {
-    max: IChartStat,
-    mean: IChartStat,
-    peaks: number
-  }
-}
-
-export interface IChartSeries extends IChartStat{
-  timestamp: number
+  stats: IChartStat
 }
 
 export interface IChartStat{
+  max: IChartItemStat
+  mean: IChartItemStat
+  peaks: number
+}
+
+export interface IChartSeries extends IChartItemStat{
+  timestamp: number
+}
+
+export interface IChartItemStat{
   angle: number
   emg1: number
   emg2: number
