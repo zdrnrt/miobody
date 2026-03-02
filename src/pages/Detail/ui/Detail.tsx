@@ -13,66 +13,9 @@ const Detail: React.FC = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-//     setData({
-//     "id": 4,
-//     "name": "тестовые данные вариант_1",
-//     "series": [
-//         {
-//             "angle": 32,
-//             "emg1": -131,
-//             "emg2": -97,
-//             "emg3": 187,
-//             "emg4": -153,
-//             "timestamp": 0
-//         },
-//         {
-//             "angle": 32,
-//             "emg1": -176,
-//             "emg2": -138,
-//             "emg3": -238,
-//             "emg4": -150,
-//             "timestamp": 14
-//         },
-//         {
-//             "angle": 432,
-//             "emg1": -179,
-//             "emg2": -147,
-//             "emg3": -234,
-//             "emg4": -154,
-//             "timestamp": 26
-//         },
-//         {
-//             "angle": 32,
-//             "emg1": -133,
-//             "emg2": -101,
-//             "emg3": 186,
-//             "emg4": -156,
-//             "timestamp": 41
-//         }
-//     ],
-//     "stats": {
-//         "max": {
-//             "angle": 32,
-//             "emg1": 1938,
-//             "emg2": 1887,
-//             "emg3": 1940,
-//             "emg4": 1950
-//         },
-//         "mean": {
-//             "angle": 132,
-//             "emg1": -234.8135364529456,
-//             "emg2": -159.63974325201266,
-//             "emg3": -178.8394875320453,
-//             "emg4": -208.93188725190987
-//         },
-//         "peaks": 0
-//     }
-// })
-
     getChart(Number(id), controller.signal)
       .then((response) => {
         setError(false)
-        console.log(response.data)
         setData(response.data)
       })
       .catch((error) => {
@@ -88,10 +31,8 @@ const Detail: React.FC = () => {
       <Link to={"/"} className="text-indigo-400 hover:text-indigo-600">На главную</Link>
     </header>
     <main>
-      {error 
-        ? <div className="col-span-full py-2 px-5 text-gray-600">При загрузке данных произошла ошибка</div>
-        : ''
-      }
+      {error && <div className="col-span-full py-2 px-5 text-gray-600">При загрузке данных произошла ошибка</div>}
+      {!data && !error && <div className="col-span-full py-2 px-5 text-gray-600">Идет загрузка</div>}
       {data && <SeriesChart data={data.series}/> }
       {data && <SeriesTable data={data.stats}/> }
     </main>

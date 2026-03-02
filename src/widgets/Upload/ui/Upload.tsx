@@ -81,8 +81,6 @@ const Upload: React.FC = () => {
     setLoading(true);
     uploadChart(formData)
       .then((response) => {
-        console.log(response)
-        console.log(response.status, response.status == 201)
         if (response.status == 201){
           const { id } = response.data;
           navigate(`chart/${id}`)
